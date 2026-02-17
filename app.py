@@ -1,6 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
+from prompts import PROMPT_TECHNIQUES
 import os
 
 load_dotenv()
@@ -27,7 +28,15 @@ prep_type = st.sidebar.selectbox("What do you want to practice?", [
     "Analyze a Job Description",
     "Mock Interview"
 ])
+# Prompt technique selector
+technique = st.sidebar.selectbox(
+    "🧪 Prompt Technique",
+    options=list(PROMPT_TECHNIQUES.keys()),
+    format_func=lambda x: PROMPT_TECHNIQUES[x]["label"]
+)
+st.sidebar.info(f"**How it works:** {PROMPT_TECHNIQUES[technique]['description']}")
 temperature = st.sidebar.slider("Creativity (Temperature)", 0.0, 1.0, 0.7)
+
 
 # --- SECURITY GUARD: block empty or irrelevant inputs ---
 def is_valid_input(text):
@@ -40,7 +49,7 @@ def is_valid_input(text):
     return True
 
 def validate_inputs(role, user_input):
-    """Use OpenAI to check if job role is real and input is not gibberish."""
+    """Use OpenAI to check if job role is real."""
     
     validation_prompt = f"""You are an input validator. Analyze the following inputs and respond ONLY in this exact format, nothing else:
 
@@ -81,39 +90,9 @@ Rules:
     
     return job_valid, job_reason, input_valid, input_reason
 
-# --- SYSTEM PROMPTS (5 techniques) ---
-system_prompts = {
-    "Technical Questions": """You are an expert technical interviewer with 15 years of experience at top tech companies.
-    Generate {difficulty} difficulty technical interview questions for a {role} position.
-    For each question: provide the question, what the interviewer is testing, and a model answer.
-    Use Chain-of-Thought: think step by step about what skills are needed for this role.""",
 
-    "Behavioral Questions (STAR method)": """You are a senior HR professional and career coach.
-    Generate behavioral interview questions using the STAR method (Situation, Task, Action, Result).
-    Example format:
-    Q: "Tell me about a time you handled conflict."
-    STAR Guide: Situation - describe workplace conflict | Task - your responsibility | Action - steps you took | Result - outcome achieved.
-    Now generate {difficulty} questions for a {role} role.""",
 
-    "Questions to ask the Interviewer": """You are a career coach helping candidates impress interviewers.
-    Generate smart, thoughtful questions a candidate should ask at the end of an interview for a {role} role.
-    Zero-shot: Generate questions across these categories: culture, growth, team, role expectations, success metrics.""",
-
-    "Analyze a Job Description": """You are an interview strategy expert.
-    Analyze the provided job description and extract:
-    1. Key technical skills to prepare for
-    2. Likely interview topics
-    3. Red flags or challenges
-    4. Suggested preparation strategy
-    Think step by step before giving your final answer.""",
-
-    "Mock Interview": """You are roleplaying as a {difficulty}-style interviewer for a {role} position.
-    - Easy: friendly and encouraging
-    - Medium: professional and neutral  
-    - Hard: strict and challenging
-    Ask one question at a time. Wait for the candidate's answer, then give brief feedback and move to the next question.
-    Start by introducing yourself and asking the first question."""
-}
+# TODO: Mock interview with interactive back-and-forth is complex to implement in a single response. Consider breaking it down into multiple steps or using a different approach for this technique.
 
 # --- MAIN INPUT AREA ---
 user_input = st.text_area(
@@ -145,25 +124,36 @@ if st.button("🚀 Generate Interview Prep", type="primary"):
         
         # Only proceed if everything is valid
         if not has_error:
-            system = system_prompts[prep_type].format(role=role, difficulty=difficulty)
-            user_prompt = f"Help me prepare for a {role} interview. Focus: {prep_type}. Difficulty: {difficulty}."
+        # Get system prompt from selected technique
+            system = PROMPT_TECHNIQUES[technique]["system_prompt"]
+            user_prompt = f"Job Role: {role}\nPreparation Type: {prep_type}\nDifficulty: {difficulty}"
             if user_input.strip():
                 user_prompt += f"\n\nAdditional context:\n{user_input}"
-
             with st.spinner("✨ Preparing your interview materials..."):
                 try:
                     response = client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        messages=[
-                            {"role": "system", "content": system},
-                            {"role": "user", "content": user_prompt}
-                        ],
-                        temperature=temperature,
-                        max_tokens=1000
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=temperature,
+                    max_tokens=1000
                     )
                     result = response.choices[0].message.content
-                    st.success("✅ Here's your interview preparation:")
-                    st.markdown(result)
+                    
+                    st.success(f"✅ Results using **{PROMPT_TECHNIQUES[technique]['label']}** technique:")
+                    
+                    # Handle JSON output differently
+                    if technique == "Structured JSON":
+                        try:
+                            import json
+                            parsed = json.loads(result)
+                            st.json(parsed)  # Renders JSON nicely in Streamlit
+                        except:
+                            st.markdown(result)  # Fallback if parsing fails
+                    else:
+                        st.markdown(result)
 
                 except Exception as e:
                     st.error(f"Something went wrong: {e}")
