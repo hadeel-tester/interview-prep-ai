@@ -35,7 +35,73 @@ technique = st.sidebar.selectbox(
     format_func=lambda x: PROMPT_TECHNIQUES[x]["label"]
 )
 st.sidebar.info(f"**How it works:** {PROMPT_TECHNIQUES[technique]['description']}")
-temperature = st.sidebar.slider("Creativity (Temperature)", 0.0, 1.0, 0.7)
+
+# === OPENAI MODEL SETTINGS (COLLAPSIBLE) ===
+with st.sidebar.expander("🤖 OpenAI Model Settings", expanded=False):
+    # Model selector
+    model = st.selectbox(
+        "Model",
+        options=[
+            "gpt-4o",
+            "gpt-4o-mini",
+            "gpt-4-turbo",
+            "gpt-3.5-turbo"
+        ],
+        index=1,  # Default to gpt-4o-mini
+        help="gpt-4o-mini is cost-effective and fast. gpt-4o is more capable but pricier."
+    )
+
+    # Temperature
+    temperature = st.slider(
+        "Temperature",
+        min_value=0.0,
+        max_value=2.0,
+        value=0.7,
+        step=0.1,
+        help="Controls randomness. Lower = more focused, higher = more creative. Range: 0-2"
+    )
+
+    # Max Tokens
+    max_tokens = st.slider(
+        "Max Tokens",
+        min_value=100,
+        max_value=4000,
+        value=1000,
+        step=100,
+        help="Maximum length of the response. More tokens = longer responses but higher cost."
+    )
+
+    # Top P
+    top_p = st.slider(
+        "Top P",
+        min_value=0.0,
+        max_value=1.0,
+        value=1.0,
+        step=0.05,
+        help="Nucleus sampling. Lower = more deterministic. Use this OR temperature, not both at extremes."
+    )
+
+    # Frequency Penalty
+    frequency_penalty = st.slider(
+        "Frequency Penalty",
+        min_value=0.0,
+        max_value=2.0,
+        value=0.0,
+        step=0.1,
+        help="Reduces repetition. Higher values = less likely to repeat phrases. Range: 0-2"
+    )
+
+    # Presence Penalty
+    presence_penalty = st.slider(
+        "Presence Penalty",
+        min_value=0.0,
+        max_value=2.0,
+        value=0.0,
+        step=0.1,
+        help="Encourages new topics. Higher values = more likely to talk about new subjects. Range: 0-2"
+    )
+
+    st.caption("💡 **Tip:** Start with defaults, then experiment!")
 
 
 # --- SECURITY GUARD: block empty or irrelevant inputs ---
@@ -102,6 +168,19 @@ user_input = st.text_area(
 )
 
 if st.button("🚀 Generate Interview Prep", type="primary"):
+
+    # Show current settings in an expander
+    with st.expander("🔧 Active Settings", expanded=False):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Model", model)
+            st.metric("Temperature", f"{temperature:.1f}")
+            st.metric("Max Tokens", max_tokens)
+        with col2:
+            st.metric("Top P", f"{top_p:.2f}")
+            st.metric("Frequency Penalty", f"{frequency_penalty:.1f}")
+            st.metric("Presence Penalty", f"{presence_penalty:.1f}")
+
     if not role:
         st.warning("⚠️ Please enter a Job Role in the sidebar first!")
     else:
@@ -137,8 +216,11 @@ if st.button("🚀 Generate Interview Prep", type="primary"):
                         {"role": "system", "content": system},
                         {"role": "user", "content": user_prompt}
                     ],
-                    temperature=temperature,
-                    max_tokens=1000
+                    temperature=temperature,  # ← Already using this
+                    max_tokens=max_tokens,  # ← New
+                    top_p=top_p,  # ← New
+                    frequency_penalty=frequency_penalty,  # ← New
+                    presence_penalty=presence_penalty  # ← New
                     )
                     result = response.choices[0].message.content
                     
