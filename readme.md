@@ -19,26 +19,21 @@ This project is built as part of the Turing College AI Engineering curriculum.
 
 ## 📁 Folder Structure
 
-```text
 interview_practice_app/
 │
-├── app.py                     # Main Streamlit application
+├── app.py                     # 📱 Main Streamlit app (UI, layout, logic)
 │
-├── prompts/                   # Required 5 system prompts
-│   ├── base_prompt.txt
-│   ├── few_shot_prompt.txt
-│   ├── role_prompt.txt
-│   ├── cot_prompt.txt
-│   └── style_prompt.txt
+├── prompts/                   # 💬 Prompt templates for different techniques
+│   ├── base_prompt.txt        # 🧱 Base system prompt
+│   ├── few_shot_prompt.txt    # 🎯 Few-shot examples
+│   ├── role_prompt.txt        # 🎭 Role-based interviewer persona
+│   ├── cot_prompt.txt         # 🧠 Chain-of-thought prompt
+│   └── style_prompt.txt       # 🎨 Style / tone prompt
 │
-├── utils/
-│   ├── openai_client.py       # Handles OpenAI API calls
-│   ├── guardrails.py          # Input validation & safety checks
-│   └── helpers.py             # Formatting and shared utilities
+├── utils/                     # 🛡️ Validation + helper functions
+│   └── input_validation.py    # 🔍 Security guardrails
 │
-├── assets/
-│   └── logo.png               # Optional branding assets
-│
-├── requirements.txt           # Python dependencies
-├── README.md                  # Project documentation
-└── .env                       # environment variables
+├── requirements.txt           # 📦 Python dependencies
+├── README.md                  # 📘 Project documentation
+└── .env                       # 🔑 API key (NOT COMMITED)
+
