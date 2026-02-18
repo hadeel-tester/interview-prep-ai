@@ -145,14 +145,24 @@ if st.button("🚀 Generate Interview Prep", type="primary"):
                     st.success(f"✅ Results using **{PROMPT_TECHNIQUES[technique]['label']}** technique:")
                     
                     # Handle JSON output differently
-                    if technique == "Structured JSON":
+                    if technique == "JSON Basic" or technique == "JSON Detailed":
                         try:
                             import json
                             parsed = json.loads(result)
                             st.json(parsed)  # Renders JSON nicely in Streamlit
-                        except:
-                            st.markdown(result)  # Fallback if parsing fails
+
+                            # Optional: Add download button
+                            st.download_button(
+                            label="📥 Download JSON",
+                            data=json.dumps(parsed, indent=2),
+                            file_name=f"interview_prep_{role.replace(' ', '_')}.json",
+                            mime="application/json"
+                        )
+                        except json.JSONDecodeError:
+                            st.warning("⚠️ Response wasn't valid JSON. Displaying as text:")
+                            st.code(result, language="json")
                     else:
+                        st.success(f"✅ Results using **{PROMPT_TECHNIQUES[technique]['label']}** technique:")
                         st.markdown(result)
 
                 except Exception as e:
