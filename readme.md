@@ -4,7 +4,7 @@ A smart, AI-powered interview preparation tool built with Streamlit and OpenAI's
 
 **Built as part of the Turing College AI Engineering curriculum.**
 
-🔗 **[Live Demo](https://app-url.streamlit.app)** _(Add this after deployment)_
+🔗 **[Live Demo](https://interview-preparation-ai.streamlit.app/)** 
 
 ---
 
