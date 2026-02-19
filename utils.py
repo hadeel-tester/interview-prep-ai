@@ -7,9 +7,13 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def is_valid_input(text):
-    """Basic input validation - checks for blocked keywords."""
-    blocked_words = ["ignore", "jailbreak", "forget your instructions", "pretend you are"]
+    """Basic input validation - checks for blocked keywords/prompt injection."""
+    blocked_words = ["ignore", "jailbreak", "forget your instructions", "pretend you are",
+                     "system prompt", "bypass", "override", "no rules", "no guidelines"
+                      "remove restrictions"]
     if not text or len(text.strip()) < 5:
+        return False
+    if len(text) > 10000:  # Prevent extremely long inputs (API abuse)
         return False
     for word in blocked_words:
         if word.lower() in text.lower():

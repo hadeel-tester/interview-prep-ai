@@ -17,7 +17,17 @@ if "interview_config" not in st.session_state:
     st.session_state.interview_config = {}
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Try to get API key from environment variable or Streamlit secrets
+try:
+    api_key = st.secrets["OPENAI_API_KEY"]
+except:
+    api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    st.error("⚠️ OpenAI API key not found. Please add it to Streamlit secrets or .env file.")
+    st.stop()
+
+client = OpenAI(api_key=api_key)
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Interview Prep AI", page_icon="🎯")
