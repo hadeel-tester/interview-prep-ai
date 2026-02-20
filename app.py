@@ -31,6 +31,18 @@ client = OpenAI(api_key=api_key)
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Interview Prep AI", page_icon="🎯")
+
+# --- MAKE PAGE WIDER (CUSTOM CSS) ---
+st.markdown("""
+    <style>
+    .main .block-container {
+        max-width: 95%;
+        padding-left: 2.5%;
+        padding-right: 2.5%;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("🎯 AI Interview Preparation Assistant")
 st.markdown("Practice and prepare for your dream job interview!")
 
