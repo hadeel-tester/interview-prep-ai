@@ -36,7 +36,11 @@ Implements 6 different prompting strategies:
 ## 🏗️ Architecture
 ```
 interview-prep-app/
-│
+├── screenshots/
+│   ├── 1-interview-questions-fewshot.png
+│   ├── 2-mock-interview-chat.png
+│   ├── 3-json-output.png
+│   └── 4-model-settings.png│
 ├── app.py                 # Main Streamlit UI and routing logic
 ├── chatbot.py             # Mock interview conversation engine
 ├── utils.py               # Input validation and security guardrails
@@ -180,11 +184,21 @@ Designed for scalable deployment on AWS EC2 with Docker containerization.
 
 ## 📊 Screenshots
 
-_Add screenshots here after deployment:_
-- Main interface
-- Mock interview in action
-- JSON output example
-- Settings panel
+### Main Interface - Interview Question Generation
+![Interview Questions](screenshots/1-interview-questions-fewshot.png)
+*AI-generated technical interview questions using Few-Shot learning technique with detailed model answers and evaluation criteria*
+
+### Interactive Mock Interview (Chatbot)
+![Mock Interview](screenshots/2-mock-interview-chat.png)
+*Real-time conversational practice with AI interviewer featuring contextual feedback and follow-up questions - the standout feature of this application*
+
+### Structured JSON Export
+![JSON Output](screenshots/3-json-output.png)
+*Exportable JSON format for integration with other tools or further analysis*
+
+### Advanced Model Controls
+![Settings Panel](screenshots/4-model-settings.png)
+*Fine-tune all OpenAI parameters: model selection, temperature, top-p, frequency penalty, presence penalty, and max tokens*
 
 ---
 
