@@ -36,9 +36,9 @@ st.set_page_config(page_title="Interview Prep AI", page_icon="🎯")
 st.markdown("""
     <style>
     .main .block-container {
-        max-width: 95%;
-        padding-left: 2.5%;
-        padding-right: 2.5%;
+        max-width: 90%;
+        padding-left: 5%;
+        padding-right: 5%;
     }
     </style>
     """, unsafe_allow_html=True)
